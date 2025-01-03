@@ -182,6 +182,9 @@ type viewDefinition struct {
 
 	// envOverlay holds additional environment to apply to this viewDefinition.
 	envOverlay map[string]string
+
+	// workspaceFiles are the set of files that will trigger this view to be re-initialized
+	workspaceFiles []string
 }
 
 // definition implements the viewDefiner interface.
@@ -830,6 +833,7 @@ func defineView(ctx context.Context, fs file.Source, folder *Folder, forFile fil
 
 	def := new(viewDefinition)
 	def.folder = folder
+	def.workspaceFiles = folder.Options.WorkspaceFiles
 
 	if forFile != nil && fileKind(forFile) == file.Go {
 		// If the file has GOOS/GOARCH build constraints that

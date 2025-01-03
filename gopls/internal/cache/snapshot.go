@@ -799,6 +799,10 @@ func (s *Snapshot) fileWatchingGlobPatterns() map[protocol.RelativePattern]unit 
 		patterns[workPattern] = unit{}
 	}
 
+	for _, glob := range s.Options().WorkspaceFiles {
+		patterns[protocol.RelativePattern{Pattern: glob}] = unit{}
+	}
+
 	extensions := "go,mod,sum,work"
 	for _, ext := range s.Options().TemplateExtensions {
 		extensions += "," + ext
@@ -1557,6 +1561,11 @@ func (s *Snapshot) clone(ctx, bgCtx context.Context, changed StateChange, done f
 		if inVendor(mod.URI) && (mod.Action == file.Create || mod.Action == file.Delete) ||
 			strings.HasSuffix(string(mod.URI), "/vendor/modules.txt") {
 
+			reinit = true
+			break
+		}
+
+		if isWorkspaceFile(mod.URI, s.view.workspaceFiles) && (mod.Action == file.Save || mod.OnDisk) {
 			reinit = true
 			break
 		}

@@ -152,7 +152,7 @@ func TestCapabilities(t *testing.T) {
 		}
 		// The item's TextEdit must be a pointer, as VS Code considers TextEdits
 		// that don't contain the cursor position to be invalid.
-		var textEdit = item.TextEdit.Value
+		textEdit := item.TextEdit.Value
 		switch textEdit.(type) {
 		case protocol.TextEdit, protocol.InsertReplaceEdit:
 		default:

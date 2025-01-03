@@ -155,6 +155,13 @@ type BuildOptions struct {
 	//
 	// This setting is only supported when gopls is built with Go 1.16 or later.
 	StandaloneTags []string
+
+	// WorkspaceFiles configures the set of globs that match files defining the logical build of the current workspace.
+	// Any on-disk changes to any files matching a glob specified here will trigger a reload of the workspace.
+	//
+	// This setting need only be customized in environments with a custom GOPACKAGESDRIVER. By default, this will look
+	// for changes to every go.mod / go.work file in your workspace.
+	WorkspaceFiles []string
 }
 
 // Note: UIOptions must be comparable with reflect.DeepEqual.
@@ -979,6 +986,8 @@ func (o *Options) setOne(name string, value any) error {
 		}
 		o.DirectoryFilters = filters
 
+	case "workspaceFiles":
+		return setStringSlice(&o.BuildOptions.WorkspaceFiles, value)
 	case "completionDocumentation":
 		return setBool(&o.CompletionDocumentation, value)
 	case "usePlaceholders":
